@@ -1,6 +1,5 @@
 package com.application.seller.service;
 
-import com.application.seller.dto.ProductRequest;
 import com.application.seller.exception.ProductNotFound;
 import com.application.seller.model.Product;
 import com.application.seller.repository.ProductRepo;
@@ -17,8 +16,7 @@ public class ProductService {
     @Autowired
     private ProductRepo productRepo;
 
-    public Product saveProduct(ProductRequest productReq, MultipartFile file) throws IOException {
-        Product product = convertToEntity(productReq);
+    public Product saveProduct(Product product, MultipartFile file) throws IOException {
         if(file != null) {
            product.setImage(file.getBytes());
            return productRepo.save(product);
@@ -61,19 +59,6 @@ public class ProductService {
                 orElseThrow(() -> new ProductNotFound("\"Product with Id :\" + id + \" not found\""));
         productRepo.deleteById(id);
         return prod;
-    }
-
-    //Converts ProductRequest to Product Entity
-    private Product convertToEntity(ProductRequest productReq) {
-        Product product = new Product();
-        product.setId(productReq.getId());
-        product.setName(productReq.getName());
-        product.setDescription(productReq.getDescription());
-        product.setAvailability(productReq.isAvailability());
-        product.setPrice(productReq.getPrice());
-        product.setQuantity(productReq.getQuantity());
-
-        return product;
     }
 
 }

@@ -1,6 +1,5 @@
 package com.application.seller.controller;
 
-import com.application.seller.dto.ProductRequest;
 import com.application.seller.model.Product;
 import com.application.seller.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +19,12 @@ public class ProductController {
     private ProductService service;
 
     @PostMapping
-    public ResponseEntity<Product> saveProduct(@RequestPart ProductRequest productReq,
+    public ResponseEntity<Product> saveProduct(@RequestPart Product product,
                                                @RequestPart MultipartFile image) throws IOException {
 
-        System.out.println(productReq);
+        System.out.println(product);
         System.out.println(image);
-        Product prod = service.saveProduct(productReq,image);
+        Product prod = service.saveProduct(product,image);
         return new ResponseEntity<>(prod,HttpStatus.OK);
     }
 

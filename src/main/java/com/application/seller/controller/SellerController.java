@@ -19,7 +19,9 @@ public class SellerController {
 
     @PostMapping("/register")
     public ResponseEntity<Seller> register(@RequestBody Seller cred){
+        System.out.println("Registering User " + cred.getUsername());
         Seller user = service.register(cred);
+        System.out.println("User registered " + user.getUsername() );
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 

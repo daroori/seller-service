@@ -36,7 +36,7 @@ public class SellerService implements UserDetailsService {
         if(credentials == null){
             throw new UserNotFound("Username with " + user.getUsername() + " Not found");
         }
-        if(credentials.getPassword().equals(user.getPassword()))
+        if(passwordEncoder.matches(user.getPassword(),credentials.getPassword()))
         {
             return credentials;
         }

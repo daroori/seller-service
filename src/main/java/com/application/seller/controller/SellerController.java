@@ -1,6 +1,6 @@
 package com.application.seller.controller;
 
-import com.application.seller.model.SellerDetails;
+import com.application.seller.model.Seller;
 import com.application.seller.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,14 +18,14 @@ public class SellerController {
     private SellerService service;
 
     @PostMapping("/register")
-    public ResponseEntity<SellerDetails> register(@RequestBody SellerDetails cred){
-        SellerDetails user = service.register(cred);
+    public ResponseEntity<Seller> register(@RequestBody Seller cred){
+        Seller user = service.register(cred);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<SellerDetails> login(@RequestBody SellerDetails cred){
-        SellerDetails user = service.login(cred);
+    public ResponseEntity<Seller> login(@RequestBody Seller cred){
+        Seller user = service.login(cred);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

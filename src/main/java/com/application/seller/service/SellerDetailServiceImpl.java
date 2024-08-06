@@ -17,14 +17,14 @@ public class SellerDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try {
-            Seller seller = sellerRepo.findByUsername(username);
-            return User.withUsername(seller.getUsername())
+        Seller seller = sellerRepo.findByUsername(username);
+        if(seller == null){
+            throw new UsernameNotFoundException("User not found with Username " + username);
+        }
+        return User.withUsername(seller.getUsername())
                     .password(seller.getPassword())
                     .authorities("SELLER")
                     .build();
-        }catch (UsernameNotFoundException ex){
-            throw new UsernameNotFoundException("User not found with Username " + username);
-        }
+
     }
 }

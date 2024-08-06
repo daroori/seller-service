@@ -1,4 +1,5 @@
 package com.application.seller.service;
+import com.application.seller.exception.UserAlreadyExisting;
 import com.application.seller.exception.UserNotFound;
 import com.application.seller.model.Seller;
 import com.application.seller.repository.SellerRepo;
@@ -36,14 +37,19 @@ public class SellerService {
         Optional<Seller> existingSeller = sellerRepo.findById(id);
 
         if(existingSeller.isPresent()){
-            Seller updatedSeller = new Seller();
+            Seller sellerToUpdate = existingSeller.get();
 
-            updatedSeller.setUsername(seller.getUsername());
-            updatedSeller.setPassword(seller.getPassword());
-            updatedSeller.setId(seller.getId());
-            updatedSeller.setName(seller.getName());
-            updatedSeller.setEmail(seller.getEmail());
-            return updatedSeller;
+            Optional<Seller> checkSeller = Optional.ofNullable(sellerRepo.findByUsername(seller.getUsername()));
+            if(checkSeller.isPresent() && (checkSeller.get().getId() != sellerToUpdate.getId())){
+                throw new UserAlreadyExisting("Username is already taken");
+            }
+
+            sellerToUpdate.setUsername(seller.getUsername());
+            sellerToUpdate.setPassword(seller.getPassword());
+            sellerToUpdate.setName(seller.getName());
+            sellerToUpdate.setEmail(seller.getEmail());
+
+            return sellerRepo.save(sellerToUpdate);
 
         }else {
             throw new UserNotFound("User not found with ID " + id);

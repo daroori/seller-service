@@ -16,7 +16,7 @@ public class SellerController {
     @Autowired
     private SellerService service;
 
-    @GetMapping( "{/id}")
+    @GetMapping( "/{id}")
     public ResponseEntity<Seller> getSellerById(@PathVariable Long id){
         Seller existingSeller = service.findById(id);
         return new ResponseEntity<>(existingSeller,HttpStatus.OK);

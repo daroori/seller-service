@@ -1,8 +1,11 @@
 package com.application.seller.controller;
+import com.application.seller.exception.InvalidCredentials;
 import com.application.seller.exception.UserAlreadyExisting;
+import com.application.seller.exception.UserNotFound;
 import com.application.seller.model.Seller;
 import com.application.seller.repository.SellerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,9 +39,5 @@ public class AuthController {
         return new ResponseEntity<>("Seller Registered Successfully", HttpStatus.CREATED);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(){
-        return new ResponseEntity<>("Seller logged in successfully",HttpStatus.OK);
-    }
 }
 

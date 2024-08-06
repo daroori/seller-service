@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
@@ -35,6 +34,7 @@ public class SecurityConfig{
         return provider;
     }
 
+
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
@@ -49,7 +49,8 @@ public class SecurityConfig{
                 )
                 .formLogin((form) -> form
                         .loginPage("/auth/login")
-                        .defaultSuccessUrl("/api/products",true)
+                        .defaultSuccessUrl("/api/products/",true)
+                        .failureHandler(new CustomAuthHandler())
                         .permitAll()
                 )
                 .logout((logout) -> logout
@@ -64,8 +65,9 @@ public class SecurityConfig{
         return (web) -> web.ignoring().requestMatchers("/auth/register","/auth/login");
     }
 
-    @Autowired
-    public void configure(AuthenticationManagerBuilder auth) throws Exception{
-        auth.authenticationProvider(authenticationProvider());
-    }
+//   @Autowired
+//    public void configure(AuthenticationManagerBuilder auth) throws Exception{
+//        auth.authenticationProvider(authenticationProvider());
+//    }
+
 }

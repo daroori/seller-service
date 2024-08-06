@@ -62,12 +62,7 @@ public class SecurityConfig{
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
-        return (web) -> web.ignoring().requestMatchers("/auth/register","/auth/login");
+        return (web) -> web.ignoring().requestMatchers("/auth/register");
     }
-
-//   @Autowired
-//    public void configure(AuthenticationManagerBuilder auth) throws Exception{
-//        auth.authenticationProvider(authenticationProvider());
-//    }
 
 }

@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRunTimeExceptions(RuntimeException e){
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ProductNotFound.class)
     public ResponseEntity<String> handleProductNotFound(ProductNotFound e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -18,8 +23,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRunTimeExceptions(RuntimeException e){
-        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(UserAlreadyExisting.class)
+    public ResponseEntity<String> handleUserAlreadyExisting(RuntimeException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

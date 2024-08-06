@@ -1,51 +1,52 @@
 package com.application.seller.service;
-
 import com.application.seller.exception.UserNotFound;
 import com.application.seller.model.Seller;
 import com.application.seller.repository.SellerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-public class SellerService implements UserDetailsService {
+public class SellerService {
 
     @Autowired
     private SellerRepo sellerRepo;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Seller seller = sellerRepo.findByUsername(username);
-        if(seller == null){
-            throw new UserNotFound("Username with " + username + " Not found");
-        }
-        return new User(seller.getUsername(), seller.getPassword(),new ArrayList<>());
+    public Seller findById(Long id) {
+        return sellerRepo.findById(id)
+                .orElseThrow(() -> new UserNotFound("Seller not found"));
     }
 
-    public Seller login(Seller user){
-        Seller credentials = sellerRepo.findByUsername(user.getUsername());
-        if(credentials == null){
-            throw new UserNotFound("Username with " + user.getUsername() + " Not found");
-        }
-        if(passwordEncoder.matches(user.getPassword(),credentials.getPassword()))
-        {
-            return credentials;
-        }
-        throw new UserNotFound("Invalid username / password");
+    public List<Seller> getAllSellers() {
+        return sellerRepo.findAll();
     }
 
-    public Seller register(Seller credentials){
-        credentials.setPassword(passwordEncoder.encode(credentials.getPassword()));
-        return sellerRepo.save(credentials);
+    public void deleteById(Long id) {
+        Optional<Seller> existingSeller = sellerRepo.findById(id);
+        if(existingSeller.isPresent()){
+            sellerRepo.deleteById(id);
+        }else {
+            throw new UserNotFound("User not found with ID " + id);
+        }
     }
 
+    public Seller updateSeller(Long id, Seller seller) {
+        Optional<Seller> existingSeller = sellerRepo.findById(id);
+
+        if(existingSeller.isPresent()){
+            Seller updatedSeller = new Seller();
+
+            updatedSeller.setUsername(seller.getUsername());
+            updatedSeller.setPassword(seller.getPassword());
+            updatedSeller.setId(seller.getId());
+            updatedSeller.setName(seller.getName());
+            updatedSeller.setEmail(seller.getEmail());
+            return updatedSeller;
+
+        }else {
+            throw new UserNotFound("User not found with ID " + id);
+        }
+    }
 }

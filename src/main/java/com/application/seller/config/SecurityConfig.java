@@ -1,12 +1,14 @@
 package com.application.seller.config;
-import com.application.seller.service.SellerService;
+import com.application.seller.service.SellerDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -18,34 +20,35 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig{
 
     @Autowired
-    private SellerService sellerService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
+    private SellerDetailServiceImpl sellerDetailService;
 
     @Bean
-    public AuthenticationProvider authProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(sellerService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(sellerDetailService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
 
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/auth/register", "/auth/login")
+                )
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(
-                                new AntPathRequestMatcher("/api/seller/register"),
-                                new AntPathRequestMatcher("/csrf"),
-                                new AntPathRequestMatcher("/api/seller/login"))
+                                new AntPathRequestMatcher("/auth/register"),
+                                new AntPathRequestMatcher("/auth/login"))
                         .permitAll().anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
-                        .loginPage("/api/seller/login")
+                        .loginPage("/auth/login")
                         .defaultSuccessUrl("/api/products",true)
                         .permitAll()
                 )
@@ -54,5 +57,15 @@ public class SecurityConfig{
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return (web) -> web.ignoring().requestMatchers("/auth/register","/auth/login");
+    }
+
+    @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception{
+        auth.authenticationProvider(authenticationProvider());
     }
 }

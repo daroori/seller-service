@@ -11,7 +11,7 @@
 
 ### **Project Structure:**
 
-The project follows a standard Spring Boot structure, with separate packages for configuration, controllers, models, repositories, services, and exceptions.
+The project follows a standard Spring MVC structure, with separate packages for configuration, controllers, models, repositories, services, and exceptions.
 
 ## API Endpoints:
 ### Authentication:
